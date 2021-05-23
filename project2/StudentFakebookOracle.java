@@ -303,7 +303,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT P_INFO.num_users, P_INFO.photo_id AS PID, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
                 
                 "FROM " + UsersTable + " U, " + TagsTable + " T, "+
 
@@ -314,8 +314,8 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 ") P_INFO " +
 
                 "WHERE T.tag_subject_id = U.user_id " +
-                "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id"
+                "AND T.tag_photo_id = PID " +
+                "ORDER BY num_users DESC, PID, U.user_id"
             );
 
 
