@@ -372,8 +372,8 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 ") P_INFO " +
 
                 "WHERE T.tag_subject_id = U.user_id " +
-                "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
+                "AND T.tag_photo_id = PID " +
+                "ORDER BY users DESC, PID, U.user_id"
             );
 
             int photoCount = 0;
