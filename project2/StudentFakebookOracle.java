@@ -265,8 +265,6 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id) " +
                 "WHERE ROWNUM <= " + num);
             
-            );
-            
             int photoCount = 0;
             while (rst.next() && photoCount < num) {
                 PhotoInfo p = new PhotoInfo(
