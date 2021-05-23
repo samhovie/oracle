@@ -247,8 +247,8 @@ public final class StudentFakebookOracle extends FakebookOracle {
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
             ResultSet rst = stmt.executeQuery(
-                "SELECT NUM_USERS, PID, AID, P_LINK, A_NAME, UID, U_FIRST, U_LAST " +
-                "FROM (" +
+                // "SELECT NUM_USERS, PID, AID, P_LINK, A_NAME, UID, U_FIRST, U_LAST " +
+                // "FROM (" +
                 
                 "SELECT P_INFO.num_users AS NUM_USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
                 
@@ -262,8 +262,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 "WHERE T.tag_subject_id = U.user_id " +
                 "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id) " +
-                "WHERE ROWNUM <= " + num);
+                "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id " 
+                
+                );
+                // + ") WHERE ROWNUM <= " + num
             
             int photoCount = 0;
             while (rst.next() && photoCount < num) {
