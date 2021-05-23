@@ -247,10 +247,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
             ResultSet rst = stmt.executeQuery(
-                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT NUM_USERS, PID, AID, P_LINK, A_NAME, UID, U_FIRST, U_LAST " +
                 "FROM (" +
                 
-                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT P_INFO.num_users AS NUM_USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
                 
                 "FROM " + UsersTable + " U, " + TagsTable + " T, "+
 
