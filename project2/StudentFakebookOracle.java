@@ -266,11 +266,28 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 "WHERE ROWNUM <= " + num);
             */
 
+            // ResultSet rst = stmt.executeQuery(
+                
+            //     "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                
+            //     "FROM " + UsersTable + " U, " + TagsTable + " T, "+
+
+            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
+            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
+            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
+            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
+            //     ") P_INFO " +
+
+            //     "WHERE T.tag_subject_id = U.user_id " +
+            //     "AND T.tag_photo_id = P_INFO.photo_id " +
+            //     "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id"
+            // );
+            
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT P_INFO.num_users AS USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
                 
-                "FROM " + UsersTable + " U, " + TagsTable + " T, "+
+                "FROM " + UsersTable + " U, " + TagsTable + " T, " +
 
                 "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
                     "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
@@ -278,11 +295,13 @@ public final class StudentFakebookOracle extends FakebookOracle {
                     "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
                 ") P_INFO " +
 
-                "WHERE T.tag_subject_id = U.user_id " +
-                "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id"
+                "WHERE T.tag_subject_id = UID " +
+                "AND T.tag_photo_id = PID " +
+                "ORDER BY USERS DESC, PID, UID"
             );
             
+
+
             int photoCount = 0;
             while (rst.next() && photoCount < num) {
                 PhotoInfo p = new PhotoInfo(
