@@ -321,7 +321,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users AS users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
                 
                 "FROM " + UsersTable + " U, " + TagsTable + " T, "+
 
@@ -333,28 +333,28 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 "WHERE T.tag_subject_id = U.user_id " +
                 "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
+                "ORDER BY P_INFO.num_users DESC, P_INFO.photo_id, U.user_id"
             );
 
             int photoCount = 0;
             while (rst.next() && photoCount < num) {
                 PhotoInfo p = new PhotoInfo(
-                    rst.getLong("photo_id"),
-                    rst.getLong("album_id"),
-                    rst.getString("photo_link"),
-                    rst.getString("album_name")
+                    rst.getLong(2),
+                    rst.getLong(3),
+                    rst.getString(4),
+                    rst.getString(5)
                 );
                 TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
 
                 int numUsers = 0;
                 rst.previous();
-                while (rst.next() && numUsers < rst.getInt("num_users")) {
+                while (rst.next() && numUsers < rst.getInt(1)) {
                     tp.addTaggedUser(
                         new UserInfo(
-                            rst.getLong("user_id"),
-                            rst.getString("first_name"),
-                            rst.getString("last_name")
+                            rst.getLong(6),
+                            rst.getString(7),
+                            rst.getString(8)
                         )
                     );
                     numUsers += 1;
@@ -365,6 +365,37 @@ public final class StudentFakebookOracle extends FakebookOracle {
             }
             rst.close();
             stmt.close();
+
+
+            // int photoCount = 0;
+            // while (rst.next() && photoCount < num) {
+            //     PhotoInfo p = new PhotoInfo(
+            //         rst.getLong("photo_id"),
+            //         rst.getLong("album_id"),
+            //         rst.getString("photo_link"),
+            //         rst.getString("album_name")
+            //     );
+            //     TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
+
+
+            //     int numUsers = 0;
+            //     rst.previous();
+            //     while (rst.next() && numUsers < rst.getInt("num_users")) {
+            //         tp.addTaggedUser(
+            //             new UserInfo(
+            //                 rst.getLong("user_id"),
+            //                 rst.getString("first_name"),
+            //                 rst.getString("last_name")
+            //             )
+            //         );
+            //         numUsers += 1;
+            //     }
+            //     results.add(tp);
+            //     rst.previous();
+            //     photoCount += 1;
+            // }
+            // rst.close();
+            // stmt.close();
 
             
 
