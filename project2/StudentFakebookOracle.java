@@ -246,139 +246,22 @@ public final class StudentFakebookOracle extends FakebookOracle {
         
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
-            /*            ResultSet rst = stmt.executeQuery(
-                "SELECT NUM_USERS, PID, AID, P_LINK, A_NAME, UID, U_FIRST, U_LAST " +
-                "FROM (" +
-                
-                "SELECT P_INFO.num_users AS NUM_USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
-                
-                "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
-                "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-                    "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-                    "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-                    "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-                ") P_INFO " +
-
-                "WHERE T.tag_subject_id = U.user_id " +
-                "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id) " +
-                "WHERE ROWNUM <= " + num);
-            */
-
-            // ResultSet rst = stmt.executeQuery(
-                
-            //     "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
-                
-            //     "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
-            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-            //     ") P_INFO " +
-
-            //     "WHERE T.tag_subject_id = U.user_id " +
-            //     "AND T.tag_photo_id = P_INFO.photo_id " +
-            //     "ORDER BY num_users DESC, P_INFO.photo_id, U.user_id"
-            // );
-            
-            // ResultSet rst = stmt.executeQuery(
-                
-            //     "SELECT P_INFO.num_users, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
-                
-            //     "FROM " + UsersTable + " U, " + TagsTable + " T, " +
-
-            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-            //     ") P_INFO " +
-
-            //     "WHERE T.tag_subject_id = UID " +
-            //     "AND T.tag_photo_id = PID " +
-            //     "ORDER BY USERS DESC, PID, UID"
-            // );
-            
-//works
-            // ResultSet rst = stmt.executeQuery(
-                
-            //     "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
-                
-            //     "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
-            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-            //     ") P_INFO " +
-
-            //     "WHERE T.tag_subject_id = U.user_id " +
-            //     "AND T.tag_photo_id = P_INFO.photo_id " +
-            //     "ORDER BY P_INFO.num_users DESC, P_INFO.photo_id, U.user_id"
-            // );
-
-            
-            
-            //"SELECT P_INFO.num_users AS NUM_USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
-                
-
-//works
-            // ResultSet rst = stmt.executeQuery(
-                
-            //     "SELECT P_INFO.num_users AS users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
-                
-            //     "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
-            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-            //     ") P_INFO " +
-
-            //     "WHERE T.tag_subject_id = U.user_id " +
-            //     "AND T.tag_photo_id = P_INFO.photo_id " +
-            //     "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
-            // );
-
-
-            // ResultSet rst = stmt.executeQuery(
-                
-            //     "SELECT P_INFO.num_users AS USERS, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS UID, U.first_name AS U_FIRST, U.last_name AS U_LAST" +
-                
-            //     "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
-            //     "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-            //         "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-            //         "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-            //         "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-            //     ") P_INFO " +
-
-            //     "WHERE T.tag_subject_id = UID " +
-            //     "AND T.tag_photo_id = PID " +
-            //     "ORDER BY users DESC, PID, UID"
-            // );
-
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users AS users, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS USERID, U.first_name AS F_NAME, U.last_name AS L_NAME " +
-                
+                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
                 "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
                 "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
                     "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-                    "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
+                    "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " +
                     "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
                 ") P_INFO " +
-
                 "WHERE T.tag_subject_id = U.user_id " +
                 "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
-            
+                "ORDER BY P_INFO.num_users DESC, P_INFO.photo_id, U.user_id"
                 );
 
-            int photoCount = 0;
-            while (rst.next() && photoCount < num) {
+            int current_photo = 0;
+            while (rst.next() && current_photo < num) {
                 PhotoInfo p = new PhotoInfo(
                     rst.getLong(2),
                     rst.getLong(3),
@@ -387,10 +270,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 );
                 TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
-
-                int numUsers = 0;
+                int tagged_user = 0;
                 rst.previous();
-                while (rst.next() && numUsers < rst.getInt(1)) {
+                int num_users = rst.getInt(1);
+                while (rst.next() && i < count) {
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
@@ -398,7 +281,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                             rst.getString(8)
                         )
                     );
-                    numUsers += 1;
+                    i += 1;
                 }
                 results.add(tp);
                 rst.previous();
