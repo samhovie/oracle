@@ -345,7 +345,7 @@ ResultSet rst = stmt.executeQuery(
         Long user1ID = null;
         Long user2ID = null;
         MatchPair pair = null;
-        while (rst.next()) {\
+        while (rst.next()) {
             if (user1ID == null || (!user1ID.equals(rst.getLong(1)) && !user2ID.equals(rst.getLong(2)))) {
                 if (pair != null) {
                     results.add(pair);
