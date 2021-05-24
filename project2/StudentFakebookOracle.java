@@ -273,7 +273,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 int tagged_user = 0;
                 rst.previous();
                 int num_users = rst.getInt(1);
-                while (rst.next() && i < count) {
+                while (rst.next() && tagged_user < count) {
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
@@ -281,11 +281,11 @@ public final class StudentFakebookOracle extends FakebookOracle {
                             rst.getString(8)
                         )
                     );
-                    i += 1;
+                    tagged_user += 1;
                 }
                 results.add(tp);
                 rst.previous();
-                photoCount += 1;
+                num_users += 1;
             }
             rst.close();
             stmt.close();
