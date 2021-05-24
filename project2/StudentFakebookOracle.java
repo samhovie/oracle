@@ -358,35 +358,36 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
 
 ResultSet rst = stmt.executeQuery(
-    "SELECT T.FIRST, T.SECOND, U1.FIRST_NAME, U1.LAST_NAME, U1.YEAR_OF_BIRTH, U2.FIRST_NAME, " +
-                      "U2.LAST_NAME, U2.YEAR_OF_BIRTH, P.PHOTO_ID, P.ALBUM_ID, P.PHOTO_LINK, A.ALBUM_NAME " +
-                      "FROM ("+ 
+    "SELECT "+
+    
+    "T.FIRST, T.SECOND, U1.FIRST_NAME, U1.LAST_NAME, U1.YEAR_OF_BIRTH, U2.FIRST_NAME, U2.LAST_NAME, U2.YEAR_OF_BIRTH, P.PHOTO_ID, P.ALBUM_ID, P.PHOTO_LINK, A.ALBUM_NAME " +
+    
+    "FROM ("+ 
                       
-                    
         "SELECT DISTINCT LEAST(FIRST, SECOND) AS FIRST, GREATEST(FIRST, SECOND) AS SECOND"+
         " FROM " +  
-        "(SELECT U1.USER_ID AS FIRST, U2.USER_ID AS SECOND, COUNT(T1.TAG_PHOTO_ID) "+ // count number of 
-        "FROM " + UsersTable + 
-        " U1, " + UsersTable + " U2, " + TagsTable + "  T1, " + TagsTable + "  T2 " +
-        //where they're both tag subject of same photo id
-        "WHERE U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID " + 
-        " AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND"+
-        //same gender, not same person
-        " U1.GENDER = U2.GENDER AND " +
-        "U1.USER_ID <> U2.USER_ID AND " +
-        //age difference
-        "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + 
-        ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + 
-        ")) "+
-        //and they're not friends 
-        "AND NOT EXISTS(SELECT * FROM " + FriendsTable + " F " +
-        "WHERE (F.USER1_ID = U1.USER_ID AND F.USER2_ID = U2.USER_ID) " + 
-        "OR (F.USER1_ID = U2.USER_ID AND F.USER2_ID = U1.USER_ID)) " +
+            "(SELECT U1.USER_ID AS FIRST, U2.USER_ID AS SECOND, COUNT(T1.TAG_PHOTO_ID) "+ // count number of 
+            "FROM " + UsersTable + 
+            " U1, " + UsersTable + " U2, " + TagsTable + "  T1, " + TagsTable + "  T2 " +
+            //where they're both tag subject of same photo id
+            "WHERE U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID " + 
+            " AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND"+
+            //same gender, not same person
+            " U1.GENDER = U2.GENDER AND " +
+            "U1.USER_ID <> U2.USER_ID AND " +
+            //age difference
+            "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + 
+            ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + 
+            ")) "+
+            //and they're not friends 
+            "AND NOT EXISTS(SELECT * FROM " + FriendsTable + " F " +
+            "WHERE (F.USER1_ID = U1.USER_ID AND F.USER2_ID = U2.USER_ID) " + 
+            "OR (F.USER1_ID = U2.USER_ID AND F.USER2_ID = U1.USER_ID)) " +
 
-        "GROUP BY U1.USER_ID, U2.USER_ID " +
-        "ORDER BY COUNT(T1.TAG_PHOTO_ID) DESC, U1.USER_ID ASC, U2.USER_ID ASC) " + 
-        "WHERE ROWNUM <= " + num +
-                      ") TOP_PAIRS, " + UsersTable + " U1, " + UsersTable + " U2, " + TagsTable + 
+            "GROUP BY U1.USER_ID, U2.USER_ID " +
+            "ORDER BY COUNT(T1.TAG_PHOTO_ID) DESC, U1.USER_ID ASC, U2.USER_ID ASC) " + 
+            "WHERE ROWNUM <= " + num +
+                      ") T, " + UsersTable + " U1, " + UsersTable + " U2, " + TagsTable + 
                       " T1, " + TagsTable + " T2, " + PhotosTable + " P, " + AlbumsTable + " A " +
                       "WHERE T.FIRST = U1.USER_ID AND T.SECOND = U2.USER_ID AND T.FIRST = T1.TAG_SUBJECT_ID " + 
                       "AND T.SECOND = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND " +
