@@ -285,7 +285,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 }
                 results.add(tp);
                 rst.previous();
-                num_users += 1;
+                current_photo += 1;
             }
             rst.close();
             stmt.close();
