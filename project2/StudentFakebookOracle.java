@@ -381,9 +381,9 @@ public final class StudentFakebookOracle extends FakebookOracle {
         }
 
         rst.next();
-        Long user1ID = rst.getLong(1);
-        Long user2ID = rst.getLong(2);
-        MatchPair pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
+        user1ID = rst.getLong(1);
+        user2ID = rst.getLong(2);
+        pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
                             rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
                         rst.getString(11), rst.getString(12)));
