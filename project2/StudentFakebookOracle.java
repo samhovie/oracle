@@ -282,6 +282,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                         )
                     );
                     tagged_user += 1;
+                    
                 }
                 results.add(tp);
                 rst.previous();
