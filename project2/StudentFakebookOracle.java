@@ -248,24 +248,22 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users AS users, P_INFO.photo_id AS PID, P_INFO.album_id AS AID, P_INFO.photo_link AS P_LINK, P_INFO.album_name AS A_NAME, U.user_id AS USERID, U.first_name AS F_NAME, U.last_name AS L_NAME " +
-                
-                "FROM " + UsersTable + " U, " + TagsTable + " T, "+
-
+                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, " +
+                "P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "FROM " + UsersTable + " U, " + TagsTable + " T, " +
                 "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
-                    "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
-                    "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " + // where photo_id appears in album and in tag 
-                    "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
+                "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
+                "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " +
+                "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
                 ") P_INFO " +
-
                 "WHERE T.tag_subject_id = U.user_id " +
                 "AND T.tag_photo_id = P_INFO.photo_id " +
                 "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
             
                 );
 
-            int photoCount = 0;
-            while (rst.next() && photoCount < num) {
+            int current_photo = 0;
+            while (rst.next() && current_photo < num) {
                 PhotoInfo p = new PhotoInfo(
                     rst.getLong(2),
                     rst.getLong(3),
@@ -274,10 +272,9 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 );
                 TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
-
-                int numUsers = 0;
+                int current_user = 0;
                 rst.previous();
-                while (rst.next() && numUsers < rst.getInt(1)) {
+                while (rst.next() && current_user < rst.getInt(1)) {
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
@@ -285,15 +282,14 @@ public final class StudentFakebookOracle extends FakebookOracle {
                             rst.getString(8)
                         )
                     );
-                    numUsers += 1;
+                    current_user += 1;
                 }
                 results.add(tp);
                 rst.previous();
-                photoCount += 1;
+                current_photo += 1;
             }
             rst.close();
             stmt.close();
-
 
         }
         catch (SQLException e) {
@@ -319,6 +315,100 @@ public final class StudentFakebookOracle extends FakebookOracle {
         FakebookArrayList<MatchPair> results = new FakebookArrayList<MatchPair>("\n");
         
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
+
+            /* 
+
+            gender, tagged photo, birth year, 
+            
+            */
+
+            stmt.executeUpdate("CREATE OR REPLACE VIEW TOP_PAIRS AS " +
+                            //select two ids 
+                            "SELECT DISTINCT LEAST(FIRST, SECOND) AS FIRST, GREATEST(FIRST, SECOND) AS SECOND"+
+                            " FROM " +  
+                            "(SELECT U1.USER_ID AS FIRST, U2.USER_ID AS SECOND, COUNT(T1.TAG_PHOTO_ID) "+ // count number of 
+                            "FROM " + UsersTable + 
+                            " U1, " + UsersTable + " U2, " + TagsTable + "  T1, " + TagsTable + "  T2 " +
+                            //where they're both tag subject of same photo id
+                            "WHERE U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID " + 
+                            " AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND"+
+                            //same gender, not same person
+                            " U1.GENDER = U2.GENDER AND " +
+                            "U1.USER_ID <> U2.USER_ID AND " +
+                            //age difference
+                            "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + 
+                            ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + 
+                            ")) "+
+                            //and they're not friends 
+                            "AND NOT EXISTS(SELECT * FROM " + FriendsTable + " F " +
+                            "WHERE (F.USER1_ID = U1.USER_ID AND F.USER2_ID = U2.USER_ID) " + 
+                            "OR (F.USER1_ID = U2.USER_ID AND F.USER2_ID = U1.USER_ID)) " +
+
+                            "GROUP BY U1.USER_ID, U2.USER_ID " +
+                            "ORDER BY COUNT(T1.TAG_PHOTO_ID) DESC, U1.USER_ID ASC, U2.USER_ID ASC) " + 
+                            "WHERE ROWNUM <= " + num);
+        
+        ResultSet rst = stmt.executeQuery("SELECT T.FIRST, T.SECOND, U1.FIRST_NAME, U1.LAST_NAME, U1.YEAR_OF_BIRTH, U2.FIRST_NAME, " +
+                                          "U2.LAST_NAME, U2.YEAR_OF_BIRTH, P.PHOTO_ID, P.ALBUM_ID, P.PHOTO_LINK, A.ALBUM_NAME " +
+                                          "FROM TOP_PAIRS T, " + UsersTable + " U1, " + UsersTable + " U2, " + TagsTable + 
+                                          " T1, " + TagsTable + " T2, " + PhotosTable + " P, " + AlbumsTable + " A " +
+                                          "WHERE T.FIRST = U1.USER_ID AND T.SECOND = U2.USER_ID AND T.FIRST = T1.TAG_SUBJECT_ID " + 
+                                          "AND T.SECOND = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND " +
+                                          "T1.TAG_PHOTO_ID = P.PHOTO_ID AND P.ALBUM_ID = A.ALBUM_ID " +
+                                          "ORDER BY T.FIRST ASC, T.SECOND ASC"
+                                          );
+        Long user1ID = null;
+        Long user2ID = null;
+        MatchPair pair = null;
+        while (rst.next()) {
+            //if id is null or both ids equal don't equal the current pos of rst
+            if (user1ID == null || (!user1ID.equals(rst.getLong(1)) && !user2ID.equals(rst.getLong(2)))) {
+                //if pair is not null, 
+                if (pair != null) {
+                    results.add(pair);
+                }
+                user1ID = rst.getLong(1);
+                user2ID = rst.getLong(2);
+                pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)),
+                        rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+            }
+
+            pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+                    rst.getString(11), rst.getString(12)));
+        }
+        if (pair != null) {
+            results.add(pair);
+        }
+
+        rst.next();
+        Long user1ID = rst.getLong(1);
+        Long user2ID = rst.getLong(2);
+        MatchPair pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
+                            rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+        pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+                        rst.getString(11), rst.getString(12)));
+
+        while(rst.next()) {
+            if  (user1ID.equals(rst.getLong(1)) {
+                pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
+            }
+            else {
+                user1ID = rst.getLong(1);
+                user2ID = rst.getLong(2);
+                pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
+                            rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+                pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+                        rst.getString(11), rst.getString(12)));
+            }
+        }
+
+        stmt.executeUpdate("DROP VIEW TOP_PAIRS");
+        rst.close();
+        stmt.close();
+
+
+
+
 
         }
         catch (SQLException e) {
