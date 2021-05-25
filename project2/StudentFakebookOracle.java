@@ -393,7 +393,7 @@ ResultSet rst = stmt.executeQuery(
                         rst.getString(11), rst.getString(12)));
 
         while(rst.next()) {
-            if  (user1ID.equals(rst.getLong(1))) {
+            if  ( user1ID.equals(rst.getLong(1))  ) {
                 pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
             }
             else {
