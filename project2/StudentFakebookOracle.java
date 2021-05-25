@@ -264,7 +264,6 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             int current_photo = 0;
             while (rst.next() && current_photo < num) {
-                rst.previous();
                 PhotoInfo p = new PhotoInfo(
                     rst.getLong(2),
                     rst.getLong(3),
@@ -288,7 +287,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 
                 results.add(tp);
-                // rst.previous();
+                rst.previous();
                 current_photo += 1;
             }
             rst.close();
