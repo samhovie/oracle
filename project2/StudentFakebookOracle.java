@@ -663,7 +663,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
             Long minYear = rst.getLong(4);
             Long minMonth = rst.getLong(5);
             Long minDay = rst.getLong(6);
-            rst.previous();
+            // rst.previous();
             while(rst.previous()) {
                 Long currentYear = rst.getLong(4);
                 Long currentMonth = rst.getLong(5);
