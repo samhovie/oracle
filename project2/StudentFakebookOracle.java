@@ -666,8 +666,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
             rst.previous();
 
             while (rst.previous() && rst.getLong(4) == minYear && rst.getLong(5) == minMonth && rst.getLong(6) == minDay) {
-                youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+                continue;
             }
+            rst.next();
+            youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
 
 
             // while(rst.previous()) {
