@@ -258,7 +258,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 ") P_INFO " +
                 "WHERE T.tag_subject_id = U.user_id " +
                 "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY users DESC, P_INFO.photo_id, U.user_id"
+                "ORDER BY P_INFO.num_users DESC, P_INFO.photo_id, U.user_id"
             
                 );
 
@@ -444,53 +444,9 @@ public final class StudentFakebookOracle extends FakebookOracle {
         
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
-            // stmt.executeUpdate("CREATE OR REPLACE VIEW FRIENDS_LIST AS " +
-            // "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
 
-            // mutual 
-            // stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
-
-            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-            //             "FROM "+
-            //             "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
-                        
-            //             + ") F1, ("+
-            //             "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
-            //             +") F2 " +
-            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
-                        
-            //             );
-
-
-
-            // stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
-            
-            //             "SELECT U1_ID, U2_ID, SUM " +
-            //             "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
-            //             "FROM ("+
-            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-            //             "FROM "+
-            //             "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
-                        
-            //             + ") F1, ("+
-            //             "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
-            //             +") F2 " +
-            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
-            //             +") " +
-            //             "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
-            //             "GROUP BY U1_ID, U2_ID " +
-            //             "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
-            //             "WHERE ROWNUM <= " + num
-                        
-            //             );
-
-
-            ResultSet rst = stmt.executeQuery("SELECT U1_ID, U2_ID, U3_ID, F1, L1, F2, L2, F3, L3 "+
+            ResultSet rst = stmt.executeQuery(
+                "SELECT U1_ID, U2_ID, U3_ID, F1, L1, F2, L2, F3, L3 "+
                                     "FROM " +
                                     "(SELECT T.SUM AS SUM, "+
                                     "T.U1_ID AS U1_ID, T.U2_ID AS U2_ID, "+
@@ -558,62 +514,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
             results.add(p);
             }
 
-            stmt.executeUpdate("DROP VIEW MOST_MUTUALS");
-            stmt.executeUpdate("DROP VIEW MUTUALS");
-            stmt.executeUpdate("DROP VIEW FRIENDS_LIST");
             rst.close();
             stmt.close();
 
-            // stmt.executeUpdate(
-            //     "CREATE OR REPLACE VIEW friends AS " +
-            //     "SELECT F1.user1_id, F1.user2_id " +
-            //     "FROM " + FriendsTable + " F1 " + 
-            //     "UNION "+
-            //     "SELECT F2.user2_id, F2.user1_id "+
-            //     "FROM " + FriendsTable + " F2");
 
-            // stmt.executeUpdate(
-            //     "CREATE OR REPLACE VIEW mutual AS " +
-            //     "SELECT F1.user1_id AS ID1, F2.user1_id AS ID2, F1.user2_id AS M " +
-            //     "FROM friends F1, friends F2 " +
-            //     "WHERE " +
-            //     "F1.USER1_ID < F2.USER1_ID AND "+
-            //     "F1.USER2_ID = F2.USER2_ID");
-
-            // stmt.executeUpdate(
-            //     "CREATE OR REPLACE VIEW mutual_count AS " +
-            //     "SELECT ID1, ID2, count " +
-            //     "FROM (SELECT ID1, ID2, COUNT(M) AS count " +
-            //     "FROM mutual " +
-            //     "WHERE NOT EXISTS "+
-            //         "(SELECT * FROM " + FriendsTable + " F "+
-            //         "WHERE F.user1_id = ID1 AND F.user2_id = ID2) " +
-            //     "GROUP BY ID1, ID2 " +
-            //     "ORDER BY count DESC, ID1 ASC, ID2 ASC) " +
-            //     "WHERE ROWNUM <= " + num);
-
-            // ResultSet rst = stmt.executeQuery(
-            //     "SELECT ID1, ID2, M, F1, L1, F2, L2, F3, L3 "+
-            //     "FROM " +
-            //     "(SELECT "+
-            //     "C.count, C.ID1 AS ID1, C.ID2 AS ID2, "+
-            //     "F.M AS M, "+
-            //     "U1.first_name AS F1, U1.last_name AS L1, "+
-            //     "U2.first_name AS F2, U2.last_name AS L2, "+
-            //     "U3.first_name AS F3, U3.last_name AS L3 " +
-            //     "FROM "+
-            //     "mutual_count C, "+
-            //     "mutual F, " + 
-            //     UsersTable + " U1, " + 
-            //     UsersTable + " U2, " + 
-            //     UsersTable + " U3 " +
-            //     "WHERE "+
-            //     "C.ID1 = F.ID1 AND "+
-            //     "C.ID2 = F.ID2 AND " +
-            //     "C.ID1 = U1.user_id AND " +
-            //     "C.ID2 = U2.user_id AND " +
-            //     "F.M = U3.user_id " +
-            //     "ORDER BY C.count DESC, C.ID1 ASC, C.ID2 ASC, M ASC)" );
 
             
             // rst.next();
@@ -701,9 +605,33 @@ public final class StudentFakebookOracle extends FakebookOracle {
     public AgeInfo findAgeInfo(long userID) throws SQLException {
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
             
+            // ResultSet rst = stmt.executeQuery(
+            //     "SELECT U.user_id, U.first_name, U.last_name " +
+            //     "FROM " + FriendsTable + " F, " + UsersTable + " U " +
+            //     "WHERE "+
+            //     "(F.user1_id = " + userID + " AND U.user_id = F.user2_id) OR "+
+            //     "(F.user2_id = " + userID + " AND U.user_id = F.user1_id) " +
+            //     "ORDER BY U.year_of_birth, U.month_of_birth, U.day_of_birth, U.user_id DESC"
+            // );
+            // UserInfo oldest = null;
+            // UserInfo youngest = null;
+            // while(rst.next()) {
+            //     if(rst.isFirst()) {
+            //         oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            //     }
+            //     if(rst.isLast()) {
+            //         youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            //     }
+            // }
+
+            // rst.close();
+            // stmt.close();
+            // return new AgeInfo(oldest, youngest);
+
             ResultSet rst = stmt.executeQuery(
                 "SELECT U.user_id, U.first_name, U.last_name " +
-                "FROM " + FriendsTable + " F, " + UsersTable + " U " +
+                "FROM " + 
+                FriendsTable + " F, " + UsersTable + " U " +
                 "WHERE "+
                 "(F.user1_id = " + userID + " AND U.user_id = F.user2_id) OR "+
                 "(F.user2_id = " + userID + " AND U.user_id = F.user1_id) " +
@@ -711,15 +639,12 @@ public final class StudentFakebookOracle extends FakebookOracle {
             );
             UserInfo oldest = null;
             UserInfo youngest = null;
-            while(rst.next()) {
-                if(rst.isFirst()) {
-                    oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
-                }
-                if(rst.isLast()) {
-                    youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
-                }
+            if(rst.next()) {
+                oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
             }
-
+            if(rst.last()) {
+                youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            }
             rst.close();
             stmt.close();
             return new AgeInfo(oldest, youngest);
