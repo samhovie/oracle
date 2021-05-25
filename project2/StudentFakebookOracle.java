@@ -272,9 +272,25 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 );
                 TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
+                // int current_user = 0;
+                // rst.previous();
+                // int total = rst.getInt(1);
+                // while (rst.next() && current_user < total) {
+                //     total = rst.getInt(1);
+                //     tp.addTaggedUser(
+                //         new UserInfo(
+                //             rst.getLong(6),
+                //             rst.getString(7),
+                //             rst.getString(8)
+                //         )
+                //     );
+                //     current_user += 1;
+                // }
+
                 int current_user = 0;
-                rst.previous();
-                while (rst.next() && current_user < rst.getInt(1)) {
+                int total = 0
+                do {
+                    total = rst.getInt(1);
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
@@ -283,7 +299,10 @@ public final class StudentFakebookOracle extends FakebookOracle {
                         )
                     );
                     current_user += 1;
-                }
+
+                } while (rst.next() && current_user < total);
+
+
                 results.add(tp);
                 rst.previous();
                 current_photo += 1;
