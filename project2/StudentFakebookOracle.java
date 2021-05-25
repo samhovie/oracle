@@ -449,29 +449,45 @@ public final class StudentFakebookOracle extends FakebookOracle {
             // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
 
             // mutual 
-            stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
-                        "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-                        "FROM (" +
+            // stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
 
-                        "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+            //             "FROM "+
+            //             "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
                         
-                        + ") F1, ("+
-                        "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
-                        +") F2 " +
-                        "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
+            //             + ") F1, ("+
+            //             "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+            //             +") F2 " +
+            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
+                        
+            //             );
 
 
 
-            stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
-                        "SELECT U1_ID, U2_ID, SUM " +
-                        "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
-                        "FROM MUTUALS " +
-                        "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
-                        "GROUP BY U1_ID, U2_ID " +
-                        "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
-                        "WHERE ROWNUM <= " + num);
+            // stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
+            
+            //             "SELECT U1_ID, U2_ID, SUM " +
+            //             "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
+            //             "FROM ("+
+            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+            //             "FROM "+
+            //             "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                        
+            //             + ") F1, ("+
+            //             "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+            //             +") F2 " +
+            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
+            //             +") " +
+            //             "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
+            //             "GROUP BY U1_ID, U2_ID " +
+            //             "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
+            //             "WHERE ROWNUM <= " + num
+                        
+            //             );
 
 
             ResultSet rst = stmt.executeQuery("SELECT U1_ID, U2_ID, U3_ID, F1, L1, F2, L2, F3, L3 "+
@@ -481,8 +497,38 @@ public final class StudentFakebookOracle extends FakebookOracle {
                                     "F.U3_ID AS U3_ID, U1.FIRST_NAME AS F1, " +
                                     "U1.LAST_NAME AS L1, U2.FIRST_NAME AS F2, U2.LAST_NAME AS L2, U3.FIRST_NAME AS F3, U3.LAST_NAME AS L3 " +
                                     "FROM "+
-                                    "MOST_MUTUALS T, "+
-                                    "MUTUALS F, " +
+                                    "("+
+                                    "SELECT U1_ID, U2_ID, SUM " +
+                                    "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
+                                    "FROM ("+
+                                    "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+                                    "FROM "+
+                                    "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+                        "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                                    
+                                    + ") F1, ("+
+                                    "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+                        "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                                    +") F2 " +
+                                    "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
+                                    +") " +
+                                    "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
+                                    "GROUP BY U1_ID, U2_ID " +
+                                    "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
+                                    "WHERE ROWNUM <= " + num
+                                    +") T, "+
+                                    "("+
+                                    "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+                                    "FROM "+
+                                    "(SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+                        "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                                    
+                                    + ") F1, ("+
+                                    "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+                        "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                                    +") F2 " +
+                                    "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID"
+                                    +") F, " +
                                         UsersTable + " U1, " + 
                                         UsersTable + " U2, " + 
                                         UsersTable + " U3 " +
