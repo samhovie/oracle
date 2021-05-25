@@ -630,26 +630,44 @@ public final class StudentFakebookOracle extends FakebookOracle {
             // stmt.close();
             // return new AgeInfo(oldest, youngest);
 
+            // ResultSet rst = stmt.executeQuery(
+            //     "SELECT U.user_id, U.first_name, U.last_name " +
+            //     "FROM " + 
+            //     FriendsTable + " F, " + UsersTable + " U " +
+            //     "WHERE "+
+            //     "(F.user1_id = " + userID + " AND U.user_id = F.user2_id) OR "+
+            //     "(F.user2_id = " + userID + " AND U.user_id = F.user1_id) " +
+            //     "ORDER BY U.year_of_birth, U.month_of_birth, U.day_of_birth, U.user_id DESC"
+            // );
+            // UserInfo oldest = null;
+            // UserInfo youngest = null;
+            // if(rst.next()) {
+            //     oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            // }
+            // if(rst.last()) {
+            //     youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            // }
+            // rst.close();
+            // stmt.close();
+            // return new AgeInfo(oldest, youngest);
+
             ResultSet rst = stmt.executeQuery(
                 "SELECT U.user_id, U.first_name, U.last_name " +
-                "FROM " + 
-                FriendsTable + " F, " + UsersTable + " U " +
-                "WHERE "+
-                "(F.user1_id = " + userID + " AND U.user_id = F.user2_id) OR "+
-                "(F.user2_id = " + userID + " AND U.user_id = F.user1_id) " +
+                "FROM " + FriendsTable + " F, " + UsersTable + " U " +
+                "WHERE (F.user1_id = " + userID + " AND U.user_id = F.user2_id) OR (F.user2_id = " + userID + " AND U.user_id = F.user1_id) " +
                 "ORDER BY U.year_of_birth, U.month_of_birth, U.day_of_birth, U.user_id DESC"
             );
-            UserInfo oldest = null;
-            UserInfo youngest = null;
+            UserInfo old = null;
+            UserInfo young = null;
             if(rst.next()) {
-                oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+                old = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
             }
             if(rst.last()) {
-                youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+                young = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
             }
             rst.close();
             stmt.close();
-            return new AgeInfo(oldest, youngest);
+            return new AgeInfo(old, young);
 
         }
         catch (SQLException e) {
