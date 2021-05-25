@@ -631,7 +631,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
             // return new AgeInfo(oldest, youngest);
 
             ResultSet rst = stmt.executeQuery(
-                "SELECT U.user_id, U.first_name, U.last_name " +
+                "SELECT U.user_id, U.first_name, U.last_name, U.year_of_birth, U.month_of_birth, U.day_of_birth " +
                 "FROM " + 
                 FriendsTable + " F, " + UsersTable + " U " +
                 "WHERE "+
@@ -641,20 +641,37 @@ public final class StudentFakebookOracle extends FakebookOracle {
             );
             UserInfo oldest = null;
             UserInfo youngest = null;
-            // if(rst.next()) {
-            //     oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
-            // }
+            if(rst.next()) {
+                oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            }
 
             // if(rst.last()) {
             //     youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
             // }
 
-            while (rst.next()) {
-                if (rst.first()) {
-                    oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
-                }
-                if (rst.last()) {
+            // while (rst.next()) {
+            //     if (rst.first()) {
+            //         oldest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            //     }
+            //     if (rst.last()) {
+            //         youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+            //     }
+            // }
+
+            rst.last();
+            //set minimum 
+            Long minYear = rst.getLong(4);
+            Long minMonth = rst.getLong(5);
+            Long minDay = rst.getLong(6);
+            rst.previous();
+            while(rst.previous()) {
+                Long currentYear = rst.getLong(4);
+                Long currentMonth = rst.getLong(5);
+                Long currentDay = rst.getLong(6);
+                if (currentYear == minYear && currentMonth == minMonth && currentDay == minDay) {
                     youngest = new UserInfo(rst.getLong(1), rst.getString(2), rst.getString(3));
+                } else {
+                    break;
                 }
             }
 
