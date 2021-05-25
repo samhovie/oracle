@@ -274,7 +274,8 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 int current_user = 0;
                 rst.previous();
-                while (rst.next() && current_user < rst.getInt(1)) {
+                int total = rst.getInt(1);
+                while (rst.next() && current_user < total) {
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
