@@ -398,8 +398,8 @@ ResultSet rst = stmt.executeQuery(
             }
             else {
                 results.add(pair);
-                user1ID = rst.getLong(1);
-                user2ID = rst.getLong(2);
+                uid1 = rst.getLong(1);
+                uid2 = rst.getLong(2);
                 pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
                             rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
                 pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
