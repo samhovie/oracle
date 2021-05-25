@@ -248,22 +248,23 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             ResultSet rst = stmt.executeQuery(
                 
-                "SELECT P_INFO.num_users, P_INFO.photo_id, P_INFO.album_id, " +
-                "P_INFO.photo_link, P_INFO.album_name, U.user_id, U.first_name, U.last_name " +
+                "SELECT PHOTO.num_users, PHOTO.photo_id, PHOTO.album_id, " +
+                "PHOTO.photo_link, PHOTO.album_name, U.user_id, U.first_name, U.last_name " +
                 "FROM " + UsersTable + " U, " + TagsTable + " T, " +
                 "(SELECT COUNT(*) AS num_users, P.photo_id, A.album_id, P.photo_link, A.album_name " +
                 "FROM " + PhotosTable + " P, " + AlbumsTable + " A, " + TagsTable + " T " +
                 "WHERE P.album_id = A.album_id AND P.photo_id = T.tag_photo_id " +
                 "GROUP BY P.photo_id, A.album_id, P.photo_link, A.album_name" +
-                ") P_INFO " +
+                ") PHOTO " +
                 "WHERE T.tag_subject_id = U.user_id " +
-                "AND T.tag_photo_id = P_INFO.photo_id " +
-                "ORDER BY P_INFO.num_users DESC, P_INFO.photo_id, U.user_id"
+                "AND T.tag_photo_id = PHOTO.photo_id " +
+                "ORDER BY PHOTO.num_users DESC, PHOTO.photo_id, U.user_id"
             
                 );
 
             int current_photo = 0;
             while (rst.next() && current_photo < num) {
+                rst.previous();
                 PhotoInfo p = new PhotoInfo(
                     rst.getLong(2),
                     rst.getLong(3),
@@ -287,7 +288,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 
                 results.add(tp);
-                rst.previous();
+                // rst.previous();
                 current_photo += 1;
             }
             rst.close();
