@@ -303,7 +303,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
                 } while (rst.next() && current_user < total);
 
-            }
+            
                 results.add(tp);
                 rst.previous();
                 current_photo += 1;
