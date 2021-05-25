@@ -295,8 +295,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                             rst.getLong("user_id"),
                             rst.getString("first_name"),
                             rst.getString("last_name")
-                        );
-                    );
+                        ));
                     numUsers += 1;
                 }
                 results.add(tp);
