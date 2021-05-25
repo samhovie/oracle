@@ -444,14 +444,22 @@ public final class StudentFakebookOracle extends FakebookOracle {
         
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
-            stmt.executeUpdate("CREATE OR REPLACE VIEW FRIENDS_LIST AS " +
-            "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
-            "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
+            // stmt.executeUpdate("CREATE OR REPLACE VIEW FRIENDS_LIST AS " +
+            // "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            // "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
 
             // mutual 
             stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
                         "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-                        "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
+                        "FROM (" +
+
+                        "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                        
+                        + ") F1, ("+
+                        "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
+            "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2"
+                        +") F2 " +
                         "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
 
 
