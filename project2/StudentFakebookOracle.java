@@ -331,7 +331,7 @@ ResultSet rst = stmt.executeQuery(
         "U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND "+
         "U1.GENDER = U2.GENDER AND U1.USER_ID <> U2.USER_ID AND "+
         
-        "ABS(U1.year_of_birth - U2.year_of_birth) <= " + yearDiff
+        "ABS(U1.year_of_birth - U2.year_of_birth) <= " + yearDiff +
 
             "AND NOT EXISTS "+
             "(SELECT * FROM " + FriendsTable + " F WHERE "+
