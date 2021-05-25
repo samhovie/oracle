@@ -287,25 +287,21 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 //     current_user += 1;
                 // }
 
-                int current_user = 0;
-                int total = 0;
-                // if () {}
-                do {
-                    total = rst.getInt(1);
+                int numUsers = 0;
+                rst.previous();
+                while (rst.next() && numUsers < rst.getInt("num_users")) {
                     tp.addTaggedUser(
                         new UserInfo(
-                            rst.getLong(6),
-                            rst.getString(7),
-                            rst.getString(8)
+                            rst.getLong("user_id"),
+                            rst.getString("first_name"),
+                            rst.getString("last_name"
                         )
                     );
-                    current_user += 1;
-
-                } while (rst.next() && current_user < total);
-
-            
+                    numUsers += 1;
+                }
                 results.add(tp);
                 rst.previous();
+                
                 current_photo += 1;
             }
             rst.close();
