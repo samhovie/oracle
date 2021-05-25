@@ -449,22 +449,17 @@ public final class StudentFakebookOracle extends FakebookOracle {
             "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
 
             // mutual 
-            // stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
-            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-            //             "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
-            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
+            stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
+                        "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+                        "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
+                        "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
+
 
 
             stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
                         "SELECT U1_ID, U2_ID, SUM " +
                         "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
-                        "FROM" + 
-
-                        "(SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-                        "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
-                        "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID)" +
-                        
-                        " MUTUALS " +
+                        "FROM MUTUALS " +
                         "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
                         "GROUP BY U1_ID, U2_ID " +
                         "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
