@@ -392,32 +392,6 @@ public final class StudentFakebookOracle extends FakebookOracle {
             }
 
 
-            // rst.next();
-            // Long uid1 = rst.getLong(1);
-            // Long uid2 = rst.getLong(2);
-            // MatchPair pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
-            //                     rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
-            // pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
-            //                 rst.getString(11), rst.getString(12)));
-
-            // while(rst.next()) {
-            //     if  ( uid1.equals(rst.getLong(1)) || user2ID.equals(rst.getLong(2))  ) {
-            //         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
-            //     }
-            //     else {
-            //         results.add(pair);
-            //         uid1 = rst.getLong(1);
-            //         uid2 = rst.getLong(2);
-            //         pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
-            //                     rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
-            //         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
-            //                 rst.getString(11), rst.getString(12)));
-            //     }
-            // }
-
-
-
-
             rst.close();
             stmt.close();
 
@@ -518,36 +492,6 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
             rst.close();
             stmt.close();
-
-
-
-            
-            // rst.next();
-            // Long uid1 = rst.getLong(1);
-            // Long uid2 = rst.getLong(2);
-            // UsersPair p = new UsersPair(new UserInfo(uid1, rst.getString(4), rst.getString(5)), 
-            //                             new UserInfo(uid2, rst.getString(6), rst.getString(7)));
-            // p.addSharedFriend(new UserInfo(rst.getInt(3), rst.getString(8), rst.getString(9)));
-
-            // while (rst.next()) {
-            //     if (uid1.equals(rst.getLong(1)) && uid2.equals(rst.getLong(2))) {
-            //         p.addSharedFriend(new UserInfo(rst.getInt(3), rst.getString(8), rst.getString(9))); 
-            //     } 
-            //     else {
-            //         results.add(p);
-            //         uid1 = rst.getLong(1);
-            //         uid2 = rst.getLong(2);
-            //         p = new UsersPair(new UserInfo(uid1, rst.getString(4), rst.getString(5)), new UserInfo(uid2, rst.getString(6), rst.getString(7)));
-            //         p.addSharedFriend(new UserInfo(rst.getInt(3), rst.getString(8), rst.getString(9))); 
-            //     }
-                
-            // }
-
-            // stmt.executeUpdate("DROP VIEW mutual_count");
-            // stmt.executeUpdate("DROP VIEW mutual");
-            // stmt.executeUpdate("DROP VIEW friends");
-            // rst.close();
-            // stmt.close();
 
         }
         catch (SQLException e) {
