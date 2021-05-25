@@ -385,17 +385,15 @@ ResultSet rst = stmt.executeQuery(
         // }
 
         rst.next();
-        // Long uid1 = rst.getLong(1);
-        // Long uid2 = rst.getLong(2);
-        Long user1ID = null;
-        Long user2ID = null;
+        Long uid1 = rst.getLong(1);
+        Long uid2 = rst.getLong(2);
         MatchPair pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
                             rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
                         rst.getString(11), rst.getString(12)));
 
         while(rst.next()) {
-            if  ( user1ID.equals(rst.getLong(1))  ) {
+            if  ( uid1.equals(rst.getLong(1))  ) {
                 pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
             }
             else {
