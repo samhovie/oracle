@@ -334,57 +334,82 @@ ResultSet rst = stmt.executeQuery(
         "ABS(U1.year_of_birth - U2.year_of_birth) <= " + yearDiff +
 
             "AND NOT EXISTS "+
-            "(SELECT * FROM " + FriendsTable + " F WHERE "+
-            
-            "(F.USER1_ID = U1.USER_ID AND F.USER2_ID = U2.USER_ID) OR (F.USER1_ID = U2.USER_ID AND F.USER2_ID = U1.USER_ID)) " +
+            "(SELECT * FROM " + FriendsTable + " F WHERE (F.USER1_ID = U1.USER_ID AND F.USER2_ID = U2.USER_ID) OR (F.USER1_ID = U2.USER_ID AND F.USER2_ID = U1.USER_ID)) " +
 
             "GROUP BY U1.USER_ID, U2.USER_ID ORDER BY COUNT(T1.TAG_PHOTO_ID) DESC, U1.USER_ID ASC, U2.USER_ID ASC) WHERE ROWNUM <= " + num + ") T, " + UsersTable + " U1, " + UsersTable + " U2, " + TagsTable + " T1, " + TagsTable + " T2, " + PhotosTable + " P, " + AlbumsTable + " A " +
                       "WHERE T.FIRST = U1.USER_ID AND T.SECOND = U2.USER_ID AND T.FIRST = T1.TAG_SUBJECT_ID AND T.SECOND = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND T1.TAG_PHOTO_ID = P.PHOTO_ID AND P.ALBUM_ID = A.ALBUM_ID ORDER BY T.FIRST ASC, T.SECOND ASC"
                       );
 
 
-        Long user1ID = null;
-        Long user2ID = null;
-        MatchPair pair = null;
-        while (rst.next()) {
-            if (user1ID == null || (!user1ID.equals(rst.getLong(1)) && !user2ID.equals(rst.getLong(2)))) {
-                if (pair != null) {
-                    results.add(pair);
-                }
-                user1ID = rst.getLong(1);
-                user2ID = rst.getLong(2);
-                pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)),
-                        rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
-            }
+        // Long user1ID = null;
+        // Long user2ID = null;
+        // MatchPair pair = null;
+        // while (rst.next()) {
+        //     if (user1ID == null || (!user1ID.equals(rst.getLong(1)) && !user2ID.equals(rst.getLong(2)))) {
+        //         if (pair != null) {
+        //             results.add(pair);
+        //         }
+        //         user1ID = rst.getLong(1);
+        //         user2ID = rst.getLong(2);
+        //         pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)),
+        //                 rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+        //     }
 
-            pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
-                    rst.getString(11), rst.getString(12)));
-        }
-        if (pair != null) {
-            results.add(pair);
-        }
+        //     pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+        //             rst.getString(11), rst.getString(12)));
+        // }
+        // if (pair != null) {
+        //     results.add(pair);
+        // }
+
+        // rst.next();
+        // user1ID = rst.getLong(1);
+        // user2ID = rst.getLong(2);
+        // pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
+        //                     rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+        // pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+        //                 rst.getString(11), rst.getString(12)));
+
+        // while(rst.next()) {
+        //     if  (user1ID.equals(rst.getLong(1))) {
+        //         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
+        //     }
+        //     else {
+        //         user1ID = rst.getLong(1);
+        //         user2ID = rst.getLong(2);
+        //         pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
+        //                     rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+        //         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
+        //                 rst.getString(11), rst.getString(12)));
+        //     }
+        // }
 
         rst.next();
-        user1ID = rst.getLong(1);
-        user2ID = rst.getLong(2);
-        pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
-                            rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+        Long uid1 = rst.getLong(1);
+        Long uid2 = rst.getLong(2);
+        MatchPair pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
+                            rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
         pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
                         rst.getString(11), rst.getString(12)));
 
         while(rst.next()) {
-            if  (user1ID.equals(rst.getLong(1))) {
+            if  (user1ID.equals(rst.getLong(1)) {
                 pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10), rst.getString(11), rst.getString(12)));
             }
             else {
+                results.add(pair);
                 user1ID = rst.getLong(1);
                 user2ID = rst.getLong(2);
-                pair = new MatchPair(new UserInfo(user1ID, rst.getString(3), rst.getString(4)), 
-                            rst.getInt(5), new UserInfo(user2ID, rst.getString(6), rst.getString(7)), rst.getInt(8));
+                pair = new MatchPair(new UserInfo(uid1, rst.getString(3), rst.getString(4)), 
+                            rst.getInt(5), new UserInfo(uid2, rst.getString(6), rst.getString(7)), rst.getInt(8));
                 pair.addSharedPhoto(new PhotoInfo(rst.getInt(9), rst.getInt(10),
                         rst.getString(11), rst.getString(12)));
             }
         }
+
+
+
+
         rst.close();
         stmt.close();
 
