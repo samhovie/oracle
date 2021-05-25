@@ -331,8 +331,6 @@ ResultSet rst = stmt.executeQuery(
         "U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND "+
         "U1.GENDER = U2.GENDER AND U1.USER_ID <> U2.USER_ID AND "+
         
-        // "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + ")) "+
-            
         "ABS(U1.year_of_birth - U2.year_of_birth) <= " + yearDiff
 
             "AND NOT EXISTS "+
