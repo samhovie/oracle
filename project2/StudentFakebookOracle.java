@@ -343,7 +343,7 @@ ResultSet rst = stmt.executeQuery(
                         new UserInfo(
                             rst.getLong("user_id"),
                             rst.getString("first_name"),
-                            rst.getString("last_name"
+                            rst.getString("last_name")
                         )
                     );
                     numUsers += 1;
