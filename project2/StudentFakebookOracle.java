@@ -316,6 +316,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
         
         try (Statement stmt = oracle.createStatement(FakebookOracleConstants.AllScroll, FakebookOracleConstants.ReadOnly)) {
 
+//   "ABS(U1.year_of_birth - U2.year_of_birth) < 10 " +
 
 ResultSet rst = stmt.executeQuery(
     "SELECT "+
@@ -323,15 +324,17 @@ ResultSet rst = stmt.executeQuery(
     "U1.FIRST_NAME, U1.LAST_NAME, U1.YEAR_OF_BIRTH, "+
     "U2.FIRST_NAME, U2.LAST_NAME, U2.YEAR_OF_BIRTH, "+
     "P.PHOTO_ID, P.ALBUM_ID, P.PHOTO_LINK, A.ALBUM_NAME "+
-    
-    "FROM (SELECT DISTINCT LEAST(FIRST, SECOND) AS FIRST, GREATEST(FIRST, SECOND) AS SECOND FROM (SELECT U1.USER_ID AS FIRST, U2.USER_ID AS SECOND, COUNT(T1.TAG_PHOTO_ID) "+
+    "FROM (SELECT DISTINCT LEAST(FIRST, SECOND) AS FIRST, GREATEST(FIRST, SECOND) AS SECOND "+
+    "FROM (SELECT U1.USER_ID AS FIRST, U2.USER_ID AS SECOND, COUNT(T1.TAG_PHOTO_ID) "+
     "FROM " + UsersTable + " U1, " + UsersTable + " U2, " + TagsTable + "  T1, " + TagsTable + "  T2 "+
         "WHERE "+
         "U1.USER_ID = T1.TAG_SUBJECT_ID AND U2.USER_ID = T2.TAG_SUBJECT_ID AND T1.TAG_PHOTO_ID = T2.TAG_PHOTO_ID AND "+
         "U1.GENDER = U2.GENDER AND U1.USER_ID <> U2.USER_ID AND "+
         
-        "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + ")) "+
+        // "((U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH >= 0 AND U1.YEAR_OF_BIRTH - U2.YEAR_OF_BIRTH <= " + yearDiff + ") OR (U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH >= 0 AND U2.YEAR_OF_BIRTH - U1.YEAR_OF_BIRTH <= " + yearDiff + ")) "+
             
+        "ABS(U1.year_of_birth - U2.year_of_birth) <= " + yearDiff
+
             "AND NOT EXISTS "+
             "(SELECT * FROM " + FriendsTable + " F WHERE "+
             
