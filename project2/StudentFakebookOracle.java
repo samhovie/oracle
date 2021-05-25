@@ -448,68 +448,72 @@ public final class StudentFakebookOracle extends FakebookOracle {
             "SELECT F1.USER1_ID, F1.USER2_ID FROM " + FriendsTable + " F1 " +
             "UNION SELECT F2.USER2_ID, F2.USER1_ID FROM " + FriendsTable + " F2");
 
-// mutual 
-stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
-            "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
-            "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
-            "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
+            // mutual 
+            // stmt.executeUpdate("CREATE OR REPLACE VIEW MUTUALS AS " +
+            //             "SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+            //             "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
+            //             "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID");
 
 
+            stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
+                        "SELECT U1_ID, U2_ID, SUM " +
+                        "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
+                        "FROM" + 
+
+                        "(SELECT F1.USER1_ID AS U1_ID, F2.USER1_ID AS U2_ID, F1.USER2_ID AS U3_ID " +
+                        "FROM FRIENDS_LIST F1, FRIENDS_LIST F2 " +
+                        "WHERE F1.USER1_ID < F2.USER1_ID AND F1.USER2_ID = F2.USER2_ID)" +
+                        
+                        " MUTUALS " +
+                        "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
+                        "GROUP BY U1_ID, U2_ID " +
+                        "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
+                        "WHERE ROWNUM <= " + num);
 
 
-stmt.executeUpdate("CREATE OR REPLACE VIEW MOST_MUTUALS AS " +
-            "SELECT U1_ID, U2_ID, SUM " +
-            "FROM (SELECT U1_ID, U2_ID, COUNT(U3_ID) AS SUM " +
-            "FROM MUTUALS " +
-            "WHERE NOT EXISTS(SELECT * FROM " + FriendsTable + " F WHERE F.USER1_ID = U1_ID AND F.USER2_ID = U2_ID) " +
-            "GROUP BY U1_ID, U2_ID " +
-            "ORDER BY SUM DESC, U1_ID ASC, U2_ID ASC) " +
-               "WHERE ROWNUM <= " + num);
+            ResultSet rst = stmt.executeQuery("SELECT U1_ID, U2_ID, U3_ID, F1, L1, F2, L2, F3, L3 "+
+                                    "FROM " +
+                                    "(SELECT T.SUM AS SUM, "+
+                                    "T.U1_ID AS U1_ID, T.U2_ID AS U2_ID, "+
+                                    "F.U3_ID AS U3_ID, U1.FIRST_NAME AS F1, " +
+                                    "U1.LAST_NAME AS L1, U2.FIRST_NAME AS F2, U2.LAST_NAME AS L2, U3.FIRST_NAME AS F3, U3.LAST_NAME AS L3 " +
+                                    "FROM "+
+                                    "MOST_MUTUALS T, "+
+                                    "MUTUALS F, " +
+                                        UsersTable + " U1, " + 
+                                        UsersTable + " U2, " + 
+                                        UsersTable + " U3 " +
+                                    "WHERE "+
+                                    "T.U1_ID = F.U1_ID AND "+
+                                    "T.U2_ID = F.U2_ID AND "+
+                                    "T.U1_ID = U1.USER_ID AND "+
+                                    "T.U2_ID = U2.USER_ID AND "+
+                                    "F.U3_ID = U3.USER_ID " +
+                                    "ORDER BY T.SUM DESC, T.U1_ID ASC, T.U2_ID ASC, U3_ID ASC)");
 
+            Long user1_id = null;
+            Long user2_id = null;
+            UsersPair p = null;
+            while (rst.next()) {
+            if (user1_id == null || (!user1_id.equals(rst.getLong(1)) || !user2_id.equals(rst.getLong(2)))) {
+            if (p != null) {
+                results.add(p);
+            }
+            user1_id = rst.getLong(1);
+            user2_id = rst.getLong(2);
+            p = new UsersPair(new UserInfo(user1_id, rst.getString(4), rst.getString(5)), new UserInfo(user2_id, rst.getString(6), rst.getString(7)));
+            }
+            p.addSharedFriend(new UserInfo(rst.getInt(3), rst.getString(8), rst.getString(9)));
+            }
+            if (p != null) {
+            results.add(p);
+            }
 
-ResultSet rst = stmt.executeQuery("SELECT U1_ID, U2_ID, U3_ID, F1, L1, F2, L2, F3, L3 "+
-                           "FROM " +
-                           "(SELECT T.SUM AS SUM, "+
-                           "T.U1_ID AS U1_ID, T.U2_ID AS U2_ID, "+
-                           "F.U3_ID AS U3_ID, U1.FIRST_NAME AS F1, " +
-                           "U1.LAST_NAME AS L1, U2.FIRST_NAME AS F2, U2.LAST_NAME AS L2, U3.FIRST_NAME AS F3, U3.LAST_NAME AS L3 " +
-                           "FROM "+
-                           "MOST_MUTUALS T, "+
-                           "MUTUALS F, " +
-                            UsersTable + " U1, " + 
-                            UsersTable + " U2, " + 
-                            UsersTable + " U3 " +
-                           "WHERE "+
-                           "T.U1_ID = F.U1_ID AND "+
-                           "T.U2_ID = F.U2_ID AND "+
-                           "T.U1_ID = U1.USER_ID AND "+
-                           "T.U2_ID = U2.USER_ID AND "+
-                           "F.U3_ID = U3.USER_ID " +
-                           "ORDER BY T.SUM DESC, T.U1_ID ASC, T.U2_ID ASC, U3_ID ASC)");
-
-Long user1_id = null;
-Long user2_id = null;
-UsersPair p = null;
-while (rst.next()) {
-if (user1_id == null || (!user1_id.equals(rst.getLong(1)) || !user2_id.equals(rst.getLong(2)))) {
- if (p != null) {
-     results.add(p);
- }
- user1_id = rst.getLong(1);
- user2_id = rst.getLong(2);
- p = new UsersPair(new UserInfo(user1_id, rst.getString(4), rst.getString(5)), new UserInfo(user2_id, rst.getString(6), rst.getString(7)));
-}
-p.addSharedFriend(new UserInfo(rst.getInt(3), rst.getString(8), rst.getString(9)));
-}
-if (p != null) {
-results.add(p);
-}
-
-stmt.executeUpdate("DROP VIEW MOST_MUTUALS");
-stmt.executeUpdate("DROP VIEW MUTUALS");
-stmt.executeUpdate("DROP VIEW FRIENDS_LIST");
-rst.close();
-stmt.close();
+            stmt.executeUpdate("DROP VIEW MOST_MUTUALS");
+            stmt.executeUpdate("DROP VIEW MUTUALS");
+            stmt.executeUpdate("DROP VIEW FRIENDS_LIST");
+            rst.close();
+            stmt.close();
 
             // stmt.executeUpdate(
             //     "CREATE OR REPLACE VIEW friends AS " +
