@@ -271,45 +271,42 @@ public final class StudentFakebookOracle extends FakebookOracle {
 
 
             int current_photo = 0;
-            while (rst.next() && current_photo < num) {
-                PhotoInfo p = new PhotoInfo(
-                    rst.getLong(2),
-                    rst.getLong(3),
-                    rst.getString(4),
-                    rst.getString(5)
-                );
-                TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
-
-                int current_user = 0;
-                int total_users = rst.getInt(1);
-                do {
-                    tp.addTaggedUser(
-                        new UserInfo(
-                            rst.getLong(6),
-                            rst.getString(7),
-                            rst.getString(8)
-                        )
+            // while (rst.next() && current_photo < num) {
+            while (rst.next()) {
+                if (current_photo < num) {
+                    PhotoInfo p = new PhotoInfo(
+                        rst.getLong(2),
+                        rst.getLong(3),
+                        rst.getString(4),
+                        rst.getString(5)
                     );
-                    current_user += 1;
-                } while (rst.next() && current_user < total_users);
+                    TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
-            //     int current_user = 0;
-            //     rst.previous();
-            //     while (rst.next() && current_user < rst.getInt(1)) {
-            //         tp.addTaggedUser(
-            //             new UserInfo(
-            //                 rst.getLong(6),
-            //                 rst.getString(7),
-            //                 rst.getString(8)
-            //             )
-            //         );
-            //         current_user += 1;
-            //     }
+                    int current_user = 0;
+                    int total_users = rst.getInt(1);
+                    do {
+                        if ( current_user < total_users) {
+                            tp.addTaggedUser(
+                                new UserInfo(
+                                    rst.getLong(6),
+                                    rst.getString(7),
+                                    rst.getString(8)
+                                )
+                            );
+                            current_user += 1;
+                        } else {
+                            break;
+                        }
+                    // } while (rst.next() && current_user < total_users);
+                    } while (rst.next());
+                    
+                    results.add(tp);
+                //     rst.previous();
+                    current_photo += 1;
+                } else {
+                    break;
+                }
 
-                
-                results.add(tp);
-            //     rst.previous();
-                current_photo += 1;
             }
             rst.close();
             stmt.close();
