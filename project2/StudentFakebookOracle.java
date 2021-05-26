@@ -260,7 +260,15 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 "AND T.tag_photo_id = PHOTO.photo_id " +
                 "ORDER BY PHOTO.num_users DESC, PHOTO.photo_id, U.user_id"
             
-                );
+            );
+
+                // num_users  ... user
+                // num_users ... user 
+
+                // create PhotoInfo
+                // create tagged 
+                // do { add user to tag } while 
+
 
             int current_photo = 0;
             while (rst.next() && current_photo < num) {
@@ -273,8 +281,7 @@ public final class StudentFakebookOracle extends FakebookOracle {
                 TaggedPhotoInfo tp = new TaggedPhotoInfo(p);
 
                 int current_user = 0;
-                rst.previous();
-                while (rst.next() && current_user < rst.getInt(1)) {
+                do {
                     tp.addTaggedUser(
                         new UserInfo(
                             rst.getLong(6),
@@ -283,15 +290,31 @@ public final class StudentFakebookOracle extends FakebookOracle {
                         )
                     );
                     current_user += 1;
-                }
+                } while (rst.next() && current_user < rst.getInt(1));
+
+            //     int current_user = 0;
+            //     rst.previous();
+            //     while (rst.next() && current_user < rst.getInt(1)) {
+            //         tp.addTaggedUser(
+            //             new UserInfo(
+            //                 rst.getLong(6),
+            //                 rst.getString(7),
+            //                 rst.getString(8)
+            //             )
+            //         );
+            //         current_user += 1;
+            //     }
 
                 
                 results.add(tp);
-                rst.previous();
+            //     rst.previous();
                 current_photo += 1;
             }
             rst.close();
             stmt.close();
+
+
+            
 
         }
         catch (SQLException e) {
